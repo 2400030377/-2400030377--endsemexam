@@ -1,0 +1,117 @@
+import React, { createContext, useState, useContext } from "react";
+import ReactDOM from "react-dom/client";
+
+const ThemeContext = createContext();
+
+const ThemeProvider = ({ children }) => {
+  const [theme, setTheme] = useState("light");
+  const toggleTheme = () => setTheme(theme === "light" ? "dark" : "light");
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+
+const useTheme = () => useContext(ThemeContext);
+
+const Navbar = () => {
+  const { toggleTheme, theme } = useTheme();
+  const styles = {
+    navbar: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: "1rem 2rem",
+      backgroundColor: theme === "light" ? "#0073e6" : "#0d0d0d",
+      color: theme === "light" ? "#fff" : "#f5f5f5",
+    },
+    button: {
+      padding: "0.5rem 1rem",
+      backgroundColor: theme === "light" ? "#222" : "#f5f5f5",
+      color: theme === "light" ? "#fff" : "#222",
+      border: "none",
+      borderRadius: "5px",
+      cursor: "pointer",
+    },
+  };
+  return (
+    <nav style={styles.navbar}>
+      <h1>KL Student Portal</h1>
+      <button style={styles.button} onClick={toggleTheme}>
+        {theme === "light" ? "Dark Mode" : "Light Mode"}
+      </button>
+    </nav>
+  );
+};
+
+const Dashboard = () => {
+  const { theme } = useTheme();
+  const styles = {
+    main: { padding: "2rem", minHeight: "70vh" },
+    cards: {
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+      gap: "1rem",
+      marginTop: "2rem",
+    },
+    card: {
+      backgroundColor: theme === "light" ? "#fff" : "#2c2c2c",
+      padding: "2rem",
+      textAlign: "center",
+      borderRadius: "8px",
+      boxShadow: "0 0 10px rgba(0,0,0,0.2)",
+    },
+  };
+  return (
+    <main style={styles.main}>
+      <h2>Welcome to KL Student Portal</h2>
+      <div style={styles.cards}>
+        <div style={styles.card}>Courses</div>
+        <div style={styles.card}>Exams</div>
+        <div style={styles.card}>Library</div>
+        <div style={styles.card}>Profile</div>
+      </div>
+    </main>
+  );
+};
+
+const Footer = () => {
+  const { theme } = useTheme();
+  const styles = {
+    footer: {
+      padding: "1rem",
+      textAlign: "center",
+      backgroundColor: theme === "light" ? "#0073e6" : "#0d0d0d",
+      color: theme === "light" ? "#fff" : "#f5f5f5",
+    },
+  };
+  return <footer style={styles.footer}>&copy; 2025 KL Student Portal</footer>;
+};
+
+const App = () => {
+  const { theme } = useTheme();
+  const appStyles = {
+    backgroundColor: theme === "light" ? "#f5f5f5" : "#1e1e1e",
+    color: theme === "light" ? "#222" : "#f5f5f5",
+    minHeight: "100vh",
+    transition: "all 0.3s",
+  };
+  return (
+    <div style={appStyles}>
+      <Navbar />
+      <Dashboard />
+      <Footer />
+    </div>
+  );
+};
+
+const Root = () => (
+  <ThemeProvider>
+    <App />
+  </ThemeProvider>
+);
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<Root />);
+
